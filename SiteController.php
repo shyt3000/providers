@@ -83,13 +83,15 @@ class SiteController extends Controller
     {
         $req = Yii::$app->request;
        
-        $phoneTo = $req->get('phoneTo');
+        $phoneTo = (int)$req->get('phoneTo');
+        if (!is_numeric($phoneTo)) return 'Phone must be a number';
+
         $phoneFrom = self::PHONE_ADMIN;
         $sid = $req->get('sid');
         $token = $req->get('token');
-
-        return (isset($sid) && isset($token)) ? "Twilio API call. From: $phoneFrom To: $phoneTo Sid: $sid, Токен: $token" : "Twilio API call. From: $phoneFrom To: $phoneTo";
-
+        
+        $twiloiSet = (isset($sid) && isset($token));
+        if (!$twiloiSet) return "Twilio API call. From: $phoneFrom To: $phoneTo";
 
         $client = new Client($sid, $token);
 
